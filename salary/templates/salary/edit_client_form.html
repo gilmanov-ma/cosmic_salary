@@ -1,0 +1,20 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Изменить данные клиента {% endblock %}
+
+{% block content %}
+  <form action="{{ update_client }}" method="POST">
+    {% csrf_token %}
+    {{ form.client_name.label_tag }}<br>
+    {{ form.client_name }}<br>
+    {{ form.official_name.label_tag }}<br>
+    {{ form.official_name }}<br>
+    {{ form.city.label_tag }}<br>
+    {{ form.city }}<br>
+    {{ form.is_still_client.label_tag }}<br>
+    {{ form.is_still_client }}<br>
+
+    <button> Изменить данные </button>
+  </form>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Расходы {% endblock %}
+
+{% block content %}
+  <h2> Расходы: </h2>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Дата </th>
+        <th> Сотрудник </th>
+        <th> Сумма </th>
+        <th> Комментарий </th>
+        <th>  </th>
+      </tr>
+
+    {% for payment in payment_filter.qs %}
+      <tr>
+        <td> {{ payment.date_time | date:"d.m.Y"}} </td>
+        <td> {{ payment.employee_id.first_name}} {{ payment.employee_id.last_name }} </a> </td>
+        <td> {{ payment.payment }} </td>
+        <td> {{ payment.comment | default_if_none:"-" }} </td>
+
+        <td> <a href= "{{ payment.get_id_to_update }}"> Редактировать </a> </td>
+      </tr>
+    {% endfor %}
+
+  </table>
+<br>
+
+<a href= "/add_payment"  class="btn btn-lg btn-primary"> Добавить платеж </a>
+<br>
+<br>
+<br>
+<h3> Фильтры </h3>
+<form method="GET">
+  {% for elem in payment_filter.form %}
+  <div>
+  {{ elem.label_tag }}
+  </div>
+  <div>
+  {{ elem }}
+  </div>
+  {% endfor %}
+  <input type="submit" /> <br>
+</form>
+<br>
+<a href= "/payments" class="btn btn-secondary btn-sm"> Сбросить фильтр </a>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Сотрудники {% endblock %}
+
+{% block content %}
+<h2> Сотрудники: </h2>
+  <table class="table table-striped">
+  <tbody>
+    <tr>
+      <th> Имя </th>
+      <th> Фамилия </th>
+      <th> Должность </th>
+      <th> Отдел </th>
+      <th> Комментарий </th>
+      <th>  </th>
+    </tr>
+    {% for employee in employees %}
+    <tr>
+      <td><a href= "{{ employee.get_url_employees }}" > {{ employee.first_name }} </a> </td>
+      <td> {{ employee.last_name }} </td>
+      <td> {{ employee.post_name }} </td>
+      <td> {{ employee.department_id }} </td>
+      <td> {{ employee.comment }} </td>
+      <td> <a href= "{{ employee.get_id_to_update }}" > Редактировать </a> </td>
+    </tr>
+    {% endfor %}
+  </table>
+<br>
+
+<a href= "/add_employee" class="btn btn-lg btn-primary"> Добавить сотрудника </a>
+{% endblock %}

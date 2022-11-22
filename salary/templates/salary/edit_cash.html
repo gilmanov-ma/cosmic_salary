@@ -1,0 +1,22 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Редактировать поступление {% endblock %}
+
+{% block content %}
+
+<form action="{{ update_client }}" method="POST">
+    {% csrf_token %}
+    {{ form.client_id.label_tag }}<br>
+    {{ form.client_id }}<br>
+    {{ form.income_item.label_tag }}<br>
+    {{ form.income_item }}<br>
+    {{ form.income.label_tag }}<br>
+    {{ form.income }}<br>
+    {{ form.date_time.label_tag }}<br>
+    {{ form.date_time }}<br>
+    {{ form.payment_to.label_tag }}<br>
+    {{ form.payment_to }}<br>
+
+    <button> Изменить данные </button>
+</form>
+{% endblock %}

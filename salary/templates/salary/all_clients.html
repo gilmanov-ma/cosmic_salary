@@ -1,0 +1,46 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Клиенты {% endblock %}
+
+{% block content %}
+  <h2> Наши клиенты: </h2>
+ <table class="table table-striped">
+  <tbody>
+    <tr>
+      <th> Наименование клиента </th>
+      <th> Юр. лицо </th>
+      <th> Город </th>
+      <td> </td>
+    </tr>
+    {% for client in clients %}
+    <tr>
+      <td><a href= "{{ client.get_url_clients }}" > {{ client.client_name }} </a> </td>
+      <td> {{ client.official_name }} </td>
+      <td> {{ client.city }} </td>
+      <td> <a href= "{{ client.get_id_to_update }}"> Редактировать </a> </td>
+    </tr>
+    {% endfor %}
+  </table>
+<td>
+  <br>
+  <a href= "/add_client" class="btn btn-lg btn-primary"> Добавить клиента </a> </td>
+  <br>
+
+<nav aria-label="Paginate me">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Предыдущая</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Следующая</a>
+        </li>
+    </ul>
+</nav>
+<br>
+
+
+
+{% endblock %}

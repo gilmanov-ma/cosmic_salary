@@ -1,0 +1,39 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Информация о {{ employee.first_name }} {% endblock %}
+
+{% block content %}
+  <h2> Сотрудник </h2>
+    <h3> {{ employee.first_name }} {{ employee.last_name }} </h3>
+    <h3> Должность {{ employee.post_name }} </h3>
+<br>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Дата </th>
+        <th> Платеж </th>
+        <th> Комментарий </th>
+      </tr>
+
+    {% for payment in payment_filter.qs %}
+      <tr>
+        <td> {{ payment.date_time | date:"d.m.Y"}} </td>
+        <td> {{ payment.payment }} </td>
+        <td> {{ payment.comment | default_if_none:"-" }} </td>
+        <td> <a href="{{ payment.get_id_to_update }}"> Редактировать </a> </td>
+    {% endfor %}
+  </table>
+  <br>
+  <a href= "/add_payment" class="btn btn-lg btn-primary"> Добавить выплату </a> </td>
+  <br>
+
+<h3> Фильтры </h3>
+<form method="GET">
+  {% csrf_token %}
+  {{ payment_filter.form }}
+  <input type="submit" /> <br>
+</form>
+<br>
+<a href= "/employees" class="btn btn-secondary btn-sm"> Сбросить фильтр </a>
+
+{% endblock %}
