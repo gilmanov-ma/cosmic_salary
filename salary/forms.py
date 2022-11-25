@@ -14,6 +14,11 @@ class EditStatusClient(forms.ModelForm):
         model = Client
         fields = ['is_still_client']
 
+class EditStatusPayment(forms.ModelForm):
+    class Meta:
+        model = Payment
+        fields = ['status']
+
 class AddEmployee(forms.ModelForm):
     class Meta:
         model = Employee

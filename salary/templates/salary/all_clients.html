@@ -7,16 +7,18 @@
  <table class="table table-striped">
   <tbody>
     <tr>
-      <th> Наименование клиента </th>
-      <th> Юр. лицо </th>
-      <th> Город </th>
+        <th> Наименование клиента </th>
+        <th> Юр. лицо </th>
+        <th> Город </th>
+        <th> Статус </th>
       <td> </td>
     </tr>
     {% for client in clients %}
     <tr>
-      <td><a href= "{{ client.get_url_clients }}" > {{ client.client_name }} </a> </td>
-      <td> {{ client.official_name }} </td>
-      <td> {{ client.city }} </td>
+        <td><a href= "{{ client.get_url_clients }}" > {{ client.client_name }} </a> </td>
+        <td> {{ client.official_name }} </td>
+        <td> {{ client.city }} </td>
+        <td> {{ client.is_still_client }} </td>
       <td> <a href= "{{ client.get_id_to_update }}"> Редактировать </a> </td>
     </tr>
     {% endfor %}

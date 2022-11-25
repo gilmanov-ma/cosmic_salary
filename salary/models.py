@@ -76,13 +76,22 @@ class Cash(models.Model):
 
 
 class Payment(models.Model):
+    STATUS = [
+        ('Оплачено', 'Оплачено'),
+        ('На проверке', 'На проверке')
+    ]
     date_time = models.DateField(blank=False)
     payment = models.PositiveIntegerField(blank=False)
     employee_id = models.ForeignKey(Employee, on_delete=models.PROTECT, default=None, blank=False)
     comment = models.CharField(max_length=200, null=True, default='Выплата с поступления', blank=True)
+    link = models.CharField(max_length=200, default=None, null=True, blank=True)
+    status = models.CharField(max_length=40, blank=False, default=STATUS[1][1], choices=STATUS)
 
     def get_id_to_update(self):
         return reverse('update_payment', args=[self.pk])
+
+    def get_id_to_change_status(self):
+        return reverse('change_status', args=[self.pk])
 
     def __str__(self):
         return f'{self.date_time} - {self.payment} {self.employee_id}'

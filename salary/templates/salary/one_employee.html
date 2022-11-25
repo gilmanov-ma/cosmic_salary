@@ -13,6 +13,9 @@
         <th> Дата </th>
         <th> Платеж </th>
         <th> Комментарий </th>
+        <th> Ссылка </th>
+        <th> Статус </th>
+        <th>  </th>
       </tr>
 
     {% for payment in payment_filter.qs %}
@@ -20,13 +23,24 @@
         <td> {{ payment.date_time | date:"d.m.Y"}} </td>
         <td> {{ payment.payment }} </td>
         <td> {{ payment.comment | default_if_none:"-" }} </td>
+        <td> {{ payment.link | default_if_none:"-"}} </td>
+        <td> {{ payment.status }} </td>
+        <td>
+          {% if payment.status == "На проверке" %}
+            <a href="{{ payment.get_id_to_change_status }}"> Подтвердить </a> </td>
+          {% endif %}
+        </td>
         <td> <a href="{{ payment.get_id_to_update }}"> Редактировать </a> </td>
+        <td></td>
+      </tr>
     {% endfor %}
   </table>
   <br>
   <a href= "/add_payment" class="btn btn-lg btn-primary"> Добавить выплату </a> </td>
   <br>
-
+  <br>
+  <br>
+  <br>
 <h3> Фильтры </h3>
 <form method="GET">
   {% csrf_token %}

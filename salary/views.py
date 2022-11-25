@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from .models import Client, Employee, Cash, Payment
-from .forms import AddEmployee, AddCash, AddClient, AddPayment, AccountsListForm, MarketersListForm, EditStatusClient
+from .forms import AddEmployee, AddCash, AddClient, AddPayment, AccountsListForm, MarketersListForm, EditStatusClient, \
+    EditStatusPayment
 from django.http import HttpResponseRedirect
 from django.views import View
 from django.views.generic.edit import UpdateView, CreateView
@@ -16,8 +17,8 @@ def main_menu(request):
     return render(request, 'salary/main.html', )
 
 
-''' Показывает страницу со всеми клиентами'''
 class AllCLients(View):
+    """ Показывает страницу со всеми клиентами"""
     def get(self, request):
         form = AddClient()
         clients = Client.objects.all()
@@ -31,8 +32,8 @@ class AllCLients(View):
             return HttpResponseRedirect('/clients')
 
 
-''' Показывает страницу с детализацией клиента'''
 class OneCLient(View):
+    """ Показывает страницу с детализацией клиента"""
     def get(self, request, id_client):
         form = EditStatusClient()
         client = get_object_or_404(Client, id=id_client)
@@ -47,8 +48,8 @@ class OneCLient(View):
         return HttpResponseRedirect('/clients')
 
 
-''' Показывает страницу с детализацией сотрудника'''
 class OneEmployee(View):
+    """ Показывает страницу с детализацией сотрудника"""
     def get(self, request, id_employee):
         form = AddPayment()
         payments = Payment.objects.filter(employee_id=id_employee)
@@ -57,20 +58,24 @@ class OneEmployee(View):
         context = {'employee': employee, 'payments': payments, 'form': form, 'payment_filter': payment_filter}
         return render(request, 'salary/one_employee.html', context=context)
 
-    def post(self, request, id_employee):
-        form = AddPayment(request.POST)
+class ChangeStatus(View):
+    """ Показывает форму с подтверждением для оплаты"""
+    def get(self, request, id_payment):
+        form = EditStatusPayment()
+        payment = get_object_or_404(Payment, id=id_payment)
+        context = {'payment': payment, 'form': form, }
+        return render(request, 'salary/change_status_form.html', context=context)
+
+    def post(self, request, id_payment):
+        payment_instance = Payment.objects.get(pk=id_payment)
+        form = EditStatusPayment(request.POST, instance=payment_instance)
+        id_employee = payment_instance.employee_id.pk
         if form.is_valid():
             form.save()
-            payments = Payment.objects.filter(employee_id=id_employee)
-            employee = get_object_or_404(Employee, id=id_employee)
-            context = {'employee': employee, 'payments': payments, 'form': form}
-            return render(request, 'salary/one_employee.html', context=context)
-        else:
-            return render(request, 'salary/error_message.html')
+        return HttpResponseRedirect(reverse('employee_detail', args=(id_employee,)))
 
-
-''' Показывает страницу с детализацией платежа'''
 class OneCash(View):
+    """ Показывает страницу с детализацией платежа"""
     def get(self, request, id_cash):
         form_list_accounts = AccountsListForm()
         cash = get_object_or_404(Cash, id=id_cash)
@@ -97,8 +102,8 @@ class OneCash(View):
             return render(request, 'salary/error_message.html')
 
 
-''' Показывает страницу со всеми сотрудниками'''
 class AllEmployees(View):
+    """ Показывает страницу со всеми сотрудниками"""
     def get(self, request):
         form = AddEmployee()
         employees = Employee.objects.all()
@@ -114,8 +119,8 @@ class AllEmployees(View):
             return render(request, 'salary/error_message.html')
 
 
-''' Показывает страницу со всеми поступлениями'''
 class AllCash(View):
+    """ Показывает страницу со всеми поступлениями"""
     def get(self, request):
         form = AddCash()
         cashes = Cash.objects.all()
@@ -136,8 +141,8 @@ class AllCash(View):
             return render(request, 'salary/error_message.html')
 
 
-''' Показывает страницу со всеми расходами'''
 class AllPayments(View):
+    """ Показывает страницу со всеми расходами"""
     def get(self, request):
         form = AddPayment()
         payments = Payment.objects.all()
@@ -154,62 +159,63 @@ class AllPayments(View):
             return render(request, 'salary/error_message.html')
 
 
-''' Редактирование формы клиента'''
 class UpdateFormClient(UpdateView):
+    """ Редактирование формы клиента"""
     model = Client
     form_class = AddClient
     template_name = 'salary/edit_client_form.html'
     success_url = '/clients'
 
 
-''' Создание формы клиента'''
 class CreateFormClient(CreateView):
+    """ Создание формы клиента"""
     model = Client
     form_class = AddClient
     template_name = 'salary/add_client_form.html'
     success_url = '/clients'
 
 
-''' Редактирование формы сотрудника'''
 class UpdateFormEmployee(UpdateView):
+    """ Редактирование формы сотрудника"""
     model = Employee
     form_class = AddEmployee
     template_name = 'salary/edit_employee_form.html'
     success_url = '/employees'
 
 
-''' Создание формы сотрудника'''
 class CreateFormEmployee(CreateView):
+    """ Создание формы сотрудника"""
     model = Employee
     form_class = AddEmployee
     template_name = 'salary/add_employee_form.html'
     success_url = '/employees'
 
 
-''' Редактирование формы поступления'''
 class UpdateFormCash(UpdateView):
+    """ Редактирование формы поступления"""
     model = Cash
     form_class = AddCash
     template_name = 'salary/edit_cash.html'
     success_url = '/cash'
 
 
-''' Создание формы поступления'''
 class CreateFormCash(CreateView):
+    """ Создание формы поступления"""
     model = Cash
     form_class = AddCash
     template_name = 'salary/add_cash.html'
     success_url = '/cash'
 
 
-''' Редактирование формы оплаты сотруднику'''
 class UpdateFormPayEmployee(UpdateView):
+    """ Редактирование формы оплаты сотруднику"""
     model = Payment
     form_class = AddPayment
     template_name = 'salary/edit_payment.html'
     success_url = '/employees'
 
 class CreateFormPayEmployee(CreateView):
+    """ Создание формы оплаты сотруднику"""
     model = Payment
     form_class = AddPayment
     template_name = 'salary/add_payment.html'
