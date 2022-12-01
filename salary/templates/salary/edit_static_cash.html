@@ -1,0 +1,20 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Редактировать постоянный доход {% endblock %}
+
+{% block content %}
+
+<form  method="POST">
+    {% csrf_token %}
+    {{ form.date.label_tag }}<br>
+    {{ form.date }}<br>
+    {{ form.cash_name.label_tag }}<br>
+    {{ form.cash_name }}<br>
+    {{ form.cash_sum.label_tag }}<br>
+    {{ form.cash_sum }}<br>
+    {{ form.comment.label_tag }}<br>
+    {{ form.comment }}<br>
+    <button> Редактировать постоянный доход </button>
+</form>
+
+{% endblock %}

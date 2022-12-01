@@ -1,0 +1,54 @@
+{% extends 'salary/base.html' %}
+
+{% block title %} Поступления {% endblock %}
+
+{% block content %}
+  <h2> Платежный календарь на {{ date | date:"m.Y" }}: </h2>
+<br>
+
+<h4> Постоянные доходы </h4>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Доход </th>
+        <th> Сумма </th>
+        <th> Комментарий </th>
+        <th>  </th>
+      </tr>
+
+    {% for cash in static_cash %}
+      <tr>
+        <td> {{ cash.cash_name }}  </td>
+        <td> {{ cash.cash_sum }} </td>
+        <td> {{ cash.comment | default_if_none:"" }} </td>
+        <td> <a href= "{{ cash.get_id_to_update }}"> Редактировать </a> </td>
+      </tr>
+    {% endfor %}
+  </table>
+<h5> Итого доходы на {{ date | date:"m.Y" }} ---- {{ total_cash }} </h5>
+<br>
+
+<h4> Постоянные расходы </h4>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Расход </th>
+        <th> Сумма </th>
+        <th> Комментарий </th>
+        <th>  </th>
+      </tr>
+
+    {% for сost in static_cost %}
+      <tr>
+        <td> {{ сost.cost_name }}  </td>
+        <td> {{ сost.cost_sum }} </td>
+        <td> {{ сost.comment | default_if_none:"" }} </td>
+        <td> <a href= "{{ сost.get_id_to_update }}"> Редактировать </a> </td>
+      </tr>
+    {% endfor %}
+  </table>
+<h5> Итого расходы на {{ date | date:"m.Y" }}  ---- {{ total_cost }}</h5>
+<br>
+
+
+{% endblock %}

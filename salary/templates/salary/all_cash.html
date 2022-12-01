@@ -12,16 +12,20 @@
         <th> Статья дохода </th>
         <th> Сумма </th>
         <th> Дата </th>
+        <th> Статус </th>
         <th>  </th>
       </tr>
 
     {% for cash in cash_filter.qs %}
       <tr>
-        <td> <a href="{% url 'cash_detail' id_cash=cash.pk %}"> {{ cash.client_id.client_name }} </a> </td>
+        <td> {{ cash.client_id.client_name }}  </td>
         <td> {{ cash.client_id.official_name }} </td>
         <td> {{ cash.income_item }} </td>
         <td> {{ cash.income }} </td>
         <td> {{ cash.date_time | date:"d.m.Y"}} </td>
+        <td>  {% if cash.status == "Распределить" %}
+          <a href="{% url 'cash_detail' id_cash=cash.pk %}">  {{ cash.status }} </a> </td>
+              {% endif %}
         <td> <a href= "{{ cash.get_id_to_update }}"> Редактировать </a> </td>
       </tr>
     {% endfor %}

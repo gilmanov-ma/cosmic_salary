@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Department, Employee, Client, Cash, Payment
+from .models import Department, Employee, Client, Cash, Payment, StaticCost, StaticCash
 
 
 # Register your models here.
@@ -15,6 +15,12 @@ class CashAdmin(admin.ModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ['date_time', 'payment', 'employee_id']
 
+class StaticCostAdmin(admin.ModelAdmin):
+    list_display = ['date', 'cost_name', 'cost_sum', 'comment']
+
+class StaticCashAdmin(admin.ModelAdmin):
+    list_display = ['date', 'cash_name', 'cash_sum', 'comment']
+
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ['client_name']
@@ -27,3 +33,5 @@ class CashAdmin(admin.ModelAdmin):
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(StaticCost, StaticCostAdmin)
+admin.site.register(StaticCash, StaticCashAdmin)

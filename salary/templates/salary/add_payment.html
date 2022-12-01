@@ -3,7 +3,7 @@
 {% block title %} Добавить выплату {% endblock %}
 
 {% block content %}
-<form action="{{ employee.get_url_employees }}" method="POST">
+<form method="POST">
     {% csrf_token %}
     {{ form.date_time.label_tag }}<br>
     {{ form.date_time }}<br>

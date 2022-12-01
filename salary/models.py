@@ -14,9 +14,27 @@ class Employee(models.Model):
         ('Старая', 'Старая'),
         ('Новая', 'Новая'),
     ]
+    POST_CHOICES = [
+        ('Менеджер по продажам', 'Менеджер по продажам'),
+        ('Аккаунт-менеджер (junior)', 'Аккаунт-менеджер (junior)'),
+        ('Аккаунт-менеджер (middle)', 'Аккаунт-менеджер (middle)'),
+        ('Аккаунт-менеджер (senior)', 'Аккаунт-менеджер (senior)'),
+        ('Младший маркетолог', 'Младший маркетолог'),
+        ('Интернет-маркетолог', 'Интернет-маркетолог'),
+        ('Call-оператор', 'Call-оператор'),
+        ('Верстальщик', 'Верстальщик'),
+        ('Дизайнер', 'Дизайнер'),
+        ('Специалист по PR', 'Специалист по PR'),
+        ('Рекрутер', 'Рекрутер'),
+        ('CRM-менеджер', 'CRM-менеджер'),
+        ('РОА', 'РОА'),
+        ('РОМ', 'РОМ'),
+        ('Ассистент директора, бухгалтер', 'Ассистент директора, бухгалтер'),
+    ]
+
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
-    post_name = models.CharField(max_length=40)
+    post_name = models.CharField(max_length=40, choices=POST_CHOICES)
     department_id = models.ForeignKey(Department, on_delete=models.PROTECT, null=True)
     comment = models.CharField(max_length=200, default=None, blank=True)
     motivation_type = models.CharField(max_length=40, default=TYPE_CHOICES[1][1], null=True, blank=True,
@@ -57,13 +75,37 @@ class Cash(models.Model):
         ('--КУ Стартап--', 'КУ Стартап'),
         ('--КУ Бизнес--', 'КУ Бизнес'),
         ('--КУ Мероприятия--', 'КУ Мероприятия'),
+        ('Покупка лидов', 'Покупка лидов'),
+        ('Лендинг (шаблон)', 'Лендинг (шаблон)'),
+        ('Лендинг (уникальный)', 'Лендинг (уникальный)'),
+        ('Разработка сайта', 'Разработка сайта'),
+        ('Ведение соцсетей', 'Ведение соцсетей'),
+        ('Управление репутацией', 'Управление репутацией'),
+        ('Roistat', 'Roistat'),
+        ('AmoCRM', 'AmoCRM'),
+        ('Wazzup ', 'Wazzup '),
+        ('Chat2Desk ', 'Chat2Desk '),
+        ('Найм', 'Найм'),
+        ('Roistat', 'Roistat'),
+        ('Callback Hunter', 'Callback Hunter'),
+        ('Прозвон лидов', 'Прозвон лидов'),
+        ('Проверка CRM', 'Проверка CRM'),
+        ('Тех. поддержка ', 'Тех. поддержка '),
+        ('Roistat', 'Roistat'),
+        ('Разработка презентации', 'Разработка презентации'),
+        ('Разработка планировки', 'Разработка планировки'),
         ('Другое', 'Другое'),
+    ]
+
+    CASH_STATUS = [('Распределить', 'Распределить'),
+                   ('Оплачено сотрудникам', 'Оплачено сотрудникам'),
     ]
 
     date_time = models.DateField(blank=False)
     income = models.PositiveIntegerField(blank=False)
     client_id = models.ForeignKey(Client, on_delete=models.PROTECT, default=None, blank=False)
     income_item = models.CharField(max_length=40, blank=False, choices=SERVICES)
+    status = models.CharField(max_length=40, blank=False, default=CASH_STATUS[0][1], choices=CASH_STATUS)
 
     def get_id_to_update(self):
         return reverse('update_cash', args=[self.pk])
@@ -83,7 +125,7 @@ class Payment(models.Model):
     date_time = models.DateField(blank=False)
     payment = models.PositiveIntegerField(blank=False)
     employee_id = models.ForeignKey(Employee, on_delete=models.PROTECT, default=None, blank=False)
-    comment = models.CharField(max_length=200, null=True, default='Выплата с поступления', blank=True)
+    comment = models.CharField(max_length=200, null=True, default=None, blank=True)
     link = models.CharField(max_length=200, default=None, null=True, blank=True)
     status = models.CharField(max_length=40, blank=False, default=STATUS[1][1], choices=STATUS)
 
@@ -95,3 +137,28 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'{self.date_time} - {self.payment} {self.employee_id}'
+
+
+class StaticCost(models.Model):
+    date = models.DateField(blank=True, null=True, default=None)
+    cost_name = models.CharField(max_length=200, null=False, default=None, blank=False)
+    cost_sum = models.PositiveIntegerField(blank=False)
+    comment = models.CharField(max_length=200, null=True, default=None, blank=True)
+
+    def __str__(self):
+        return f'{self.cost_name} - {self.cost_sum}'
+
+    def get_id_to_update(self):
+        return reverse('static_cost_update', args=[self.pk])
+
+class StaticCash(models.Model):
+    date = models.DateField(blank=True, null=True, default=None)
+    cash_name = models.CharField(max_length=200, null=False, default=None, blank=False)
+    cash_sum = models.PositiveIntegerField(blank=False)
+    comment = models.CharField(max_length=200, null=True, default=None, blank=True)
+
+    def __str__(self):
+        return f'{self.cash_name} - {self.cash_sum}'
+
+    def get_id_to_update(self):
+        return reverse('static_cash_update', args=[self.pk])

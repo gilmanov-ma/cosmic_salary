@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, reverse
-from .models import Client, Employee, Cash, Payment
+from .models import Client, Employee, Cash, Payment, StaticCost, StaticCash
 from .forms import AddEmployee, AddCash, AddClient, AddPayment, AccountsListForm, MarketersListForm, EditStatusClient, \
-    EditStatusPayment
+    EditStatusPayment, SalesListForm, EditStaticCashForm, EditStaticCostForm
 from django.http import HttpResponseRedirect
 from django.views import View
 from django.views.generic.edit import UpdateView, CreateView
@@ -9,11 +9,11 @@ from .filters import CashFilter, PaymentFilter
 import datetime
 
 
-Motivation = dict(account_old_motivation=0.5, account_new_motivation=0.4)
 
 
-''' Вызывает главное меню'''
+
 def main_menu(request):
+    """ Вызывает главное меню"""
     return render(request, 'salary/main.html', )
 
 
@@ -74,32 +74,106 @@ class ChangeStatus(View):
             form.save()
         return HttpResponseRedirect(reverse('employee_detail', args=(id_employee,)))
 
+
 class OneCash(View):
     """ Показывает страницу с детализацией платежа"""
     def get(self, request, id_cash):
         form_list_accounts = AccountsListForm()
+        form_list_marketers = MarketersListForm()
+        form_list_sales = SalesListForm()
         cash = get_object_or_404(Cash, id=id_cash)
-        context = {'cash': cash, 'form_list_accounts': form_list_accounts}
+        context = {'cash': cash, 'form_list_accounts': form_list_accounts, 'form_list_marketers': form_list_marketers
+                   , 'form_list_sales': form_list_sales}
         return render(request, 'salary/one_cash.html', context=context)
 
     def post(self, request, id_cash):
         form_list_accounts = AccountsListForm(request.POST)
-        if form_list_accounts.is_valid():
-            employee_id = form_list_accounts.cleaned_data['account_manager']
-            if Employee.objects.filter(pk=employee_id)[0].motivation_type == 'Новая':
-                payment = Cash.objects.filter(pk=id_cash)[0].income * Motivation['account_new_motivation']
-            else:
-                payment = Cash.objects.filter(pk=id_cash)[0].income * Motivation['account_old_motivation']
+        form_list_marketers = MarketersListForm(request.POST)
+        form_list_sales = SalesListForm(request.POST)
 
-            Payment.objects.create(
-                date_time=datetime.date.today(),
-                employee_id=Employee.objects.filter(pk=employee_id)[0],
-                payment=payment,
-                comment='Выплата с поступления'
-            )
-            return render(request, 'salary/success_message.html')
-        else:
-            return render(request, 'salary/error_message.html')
+        motivation = {
+            'account': {'junior': 0.13, 'middle': 0.16, 'senior': 0.2},
+            'marketer': {'old': {'junior': 0.12, 'middle': 0.23}, 'new': {'junior': 0.12, 'middle': 0.23}},
+            'sales': {'new': 0.141}
+        }
+
+        if Cash.objects.filter(pk=id_cash)[0].income_item == '--КУ Стартап--':
+            if form_list_accounts.is_valid():
+                employee_id_account = form_list_accounts.cleaned_data['account_manager']
+                if Employee.objects.filter(pk=int(employee_id_account))[0].post_name == 'Аккаунт-менеджер (junior)':
+                    payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['account']['junior']
+                    Payment.objects.create(
+                        date_time=datetime.date.today(),
+                        employee_id=Employee.objects.filter(pk=employee_id_account)[0],
+                        payment=payment,
+                        comment='Выплата с поступления'
+                    )
+
+                elif Employee.objects.filter(pk=int(employee_id_account))[0].post_name == 'Аккаунт-менеджер (middle)':
+                    payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['account']['middle']
+                    Payment.objects.create(
+                        date_time=datetime.date.today(),
+                        employee_id=Employee.objects.filter(pk=employee_id_account)[0],
+                        payment=payment,
+                        comment='Выплата с поступления'
+                    )
+
+                elif Employee.objects.filter(pk=int(employee_id_account))[0].post_name == 'Аккаунт-менеджер (senior)':
+                    payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['account']['senior']
+                    Payment.objects.create(
+                        date_time=datetime.date.today(),
+                        employee_id=Employee.objects.filter(pk=employee_id_account)[0],
+                        payment=payment,
+                        comment='Выплата с поступления'
+                    )
+
+            if form_list_marketers.is_valid():
+                employee_id_marketer = form_list_marketers.cleaned_data['marketer_manager']
+                if Employee.objects.filter(pk=int(employee_id_marketer))[0].post_name == 'Младший маркетолог':
+                    if Employee.objects.filter(pk=int(employee_id_marketer))[0].motivation_type == 'Старая':
+                        payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['marketer']['old']['junior']
+                        Payment.objects.create(
+                            date_time=datetime.date.today(),
+                            employee_id=Employee.objects.filter(pk=int(employee_id_marketer))[0],
+                            payment=payment,
+                            comment='Выплата с поступления'
+                        )
+                    elif Employee.objects.filter(pk=int(employee_id_marketer))[0].motivation_type == 'Новая':
+                        payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['marketer']['new']['junior']
+                        Payment.objects.create(
+                            date_time=datetime.date.today(),
+                            employee_id=Employee.objects.filter(pk=int(employee_id_marketer))[0],
+                            payment=payment,
+                            comment='Выплата с поступления'
+                        )
+
+                elif Employee.objects.filter(pk=int(employee_id_marketer))[0].post_name == 'Интернет-маркетолог':
+                    if Employee.objects.filter(pk=int(employee_id_marketer))[0].motivation_type == 'Старая':
+                        payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['marketer']['old']['middle']
+                        Payment.objects.create(
+                            date_time=datetime.date.today(),
+                            employee_id=Employee.objects.filter(pk=int(employee_id_marketer))[0],
+                            payment=payment,
+                            comment='Выплата с поступления'
+                        )
+                    elif Employee.objects.filter(pk=int(employee_id_marketer))[0].motivation_type == 'Новая':
+                        payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['marketer']['new']['middle']
+                        Payment.objects.create(
+                            date_time=datetime.date.today(),
+                            employee_id=Employee.objects.filter(pk=int(employee_id_marketer))[0],
+                            payment=payment,
+                            comment='Выплата с поступления'
+                        )
+            if form_list_sales.is_valid():
+                employee_id_sales = form_list_sales.cleaned_data['sales_manager']
+                payment = Cash.objects.filter(pk=id_cash)[0].income * motivation['sales']['new']
+                Payment.objects.create(
+                    date_time=datetime.date.today(),
+                    employee_id=Employee.objects.filter(pk=int(employee_id_sales))[0],
+                    payment=payment,
+                    comment='Выплата с поступления'
+                )
+        return render(request, 'salary/success_message.html')
 
 
 class AllEmployees(View):
@@ -212,18 +286,42 @@ class UpdateFormPayEmployee(UpdateView):
     model = Payment
     form_class = AddPayment
     template_name = 'salary/edit_payment.html'
-    success_url = '/employees'
+    success_url = '/payments'
 
 class CreateFormPayEmployee(CreateView):
     """ Создание формы оплаты сотруднику"""
     model = Payment
     form_class = AddPayment
     template_name = 'salary/add_payment.html'
-    success_url = '/employees'
+    success_url = '/payments'
 
+class Calendar(View):
+    """ Платежный календарь"""
+    def get(self, request):
+        static_cost = StaticCost.objects.all()
+        static_cash = StaticCash.objects.all()
+        total_cost = 0
+        total_cash = 0
+        for elem in static_cost:
+            total_cost += elem.cost_sum
+        for elem in static_cash:
+            total_cash += elem.cash_sum
+        date = static_cost[0].date
+        context = {'static_cost': static_cost, 'static_cash': static_cash, 'date': date, 'total_cost': total_cost,
+                   'total_cash': total_cash
+                   }
+        return render(request, 'salary/calendar.html', context=context)
 
-def home_view(request):
-    """Функция для тестирования"""
-    context = {}
-    context["form"] = AccountsListForm()
-    return render(request, "salary/listform.html.", context)
+class UpdateStaticCost(UpdateView):
+    """ Редактирование постоянного расхода"""
+    model = StaticCost
+    form_class = EditStaticCostForm
+    template_name = 'salary/edit_static_cost.html'
+    success_url = '/payment_calendar'
+
+class UpdateStaticCash(UpdateView):
+    """ Редактирование постоянного дохода"""
+    model = StaticCash
+    form_class = EditStaticCashForm
+    template_name = 'salary/edit_static_cash.html'
+    success_url = '/payment_calendar'

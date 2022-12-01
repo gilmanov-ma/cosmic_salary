@@ -1,4 +1,4 @@
-from .models import Employee, Client, Cash, Payment, Department
+from .models import Employee, Client, Cash, Payment, Department, StaticCost, StaticCash
 from django import forms
 
 class DateInput(forms.DateInput):
@@ -41,13 +41,30 @@ class AccountsListForm(forms.Form):
     ACCOUNT_CHOICES = (
         Employee.objects.filter(department_id=Department.objects.get(name_department='Аккаунт'))
     )
-    account_list = ((elem.pk, elem.last_name) for elem in ACCOUNT_CHOICES)
+    account_list = ((elem.pk, f'{elem.first_name} {elem.last_name}') for elem in ACCOUNT_CHOICES)
     account_manager = forms.ChoiceField(choices=account_list)
-
 
 class MarketersListForm(forms.Form):
     MARKETER_CHOICES = (
         Employee.objects.filter(department_id=Department.objects.get(name_department='Маркетинг')))
-    marketer_list = ((count, elem.last_name,) for count, elem in enumerate(MARKETER_CHOICES))
+    marketer_list = ((elem.pk, f'{elem.first_name} {elem.last_name}') for elem in MARKETER_CHOICES)
     marketer_manager = forms.ChoiceField(choices=marketer_list)
+
+class SalesListForm(forms.Form):
+    SALES_CHOICES = (
+        Employee.objects.filter(department_id=Department.objects.get(name_department='Продажи')))
+    sales_list = ((elem.pk, f'{elem.first_name} {elem.last_name}') for elem in SALES_CHOICES)
+    sales_manager = forms.ChoiceField(choices=sales_list)
+
+class EditStaticCostForm(forms.ModelForm):
+    class Meta:
+        widgets = {'date': DateInput()}
+        model = StaticCost
+        fields = '__all__'
+
+class EditStaticCashForm(forms.ModelForm):
+    class Meta:
+        widgets = {'date': DateInput()}
+        model = StaticCash
+        fields = '__all__'
 

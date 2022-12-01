@@ -29,14 +29,13 @@
           {% if payment.status == "На проверке" %}
             <a href="{{ payment.get_id_to_change_status }}"> Подтвердить </a> </td>
           {% endif %}
-        </td>
         <td> <a href="{{ payment.get_id_to_update }}"> Редактировать </a> </td>
         <td></td>
       </tr>
     {% endfor %}
   </table>
   <br>
-  <a href= "/add_payment" class="btn btn-lg btn-primary"> Добавить выплату </a> </td>
+  <a href= "/add_payment" class="btn btn-lg btn-primary"> Добавить выплату </a>
   <br>
   <br>
   <br>
