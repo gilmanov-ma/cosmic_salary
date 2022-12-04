@@ -16,7 +16,7 @@
         <th>  </th>
       </tr>
 
-    {% for cash in cash_filter.qs %}
+    {% for cash in page_obj %}
       <tr>
         <td> {{ cash.client_id.client_name }}  </td>
         <td> {{ cash.client_id.official_name }} </td>
@@ -36,7 +36,25 @@
 <a href= "/add_cash"  class="btn btn-lg btn-primary"> Добавить поступление </a>
 <br>
 <br>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 <br>
+
 
 <h3> Фильтры </h3>
 <form method="GET">

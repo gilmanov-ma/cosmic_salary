@@ -28,6 +28,27 @@
 <h5> Итого доходы на {{ date | date:"m.Y" }} ---- {{ total_cash }} </h5>
 <br>
 
+<h4> Клиенты за прошлый месяц </h4>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Клиент </th>
+        <th> Сумма </th>
+        <th>  </th>
+      </tr>
+
+    {% for client in clients_previous_month %}
+      <tr>
+        <td> {{ client.client_id.client_name }}  </td>
+        <td> {{ client.income }} </td>
+      </tr>
+    {% endfor %}
+  </table>
+<h5> Итого поступления от клиентов за прошлый месяц ---- {{ total_clients_previous_month }} </h5>
+<br>
+
+
+
 <h4> Постоянные расходы </h4>
   <table class="table table-striped">
     <tbody>
@@ -50,5 +71,32 @@
 <h5> Итого расходы на {{ date | date:"m.Y" }}  ---- {{ total_cost }}</h5>
 <br>
 
+<h4> Налоги </h4>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th> Налог </th>
+        <th> Сумма </th>
+        <th> Комментарий </th>
+        <th>  </th>
+      </tr>
 
+      <tr>
+        <td> Налог УСНО 2й кв. 2022 апрель  </td>
+        <td> 17129  </td>
+        <td> </td>
+      </tr>
+
+      <tr>
+        <td> Налог по ИП 1% 2022г </td>
+        <td> 15643 </td>
+        <td> до конца июня </td>
+      </tr>
+
+      <tr>
+        <td> Страховые взносы  </td>
+        <td> 0 </td>
+        <td>  </td>
+      </tr>
+  </table>
 {% endblock %}

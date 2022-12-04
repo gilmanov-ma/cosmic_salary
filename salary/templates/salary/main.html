@@ -3,14 +3,9 @@
 {% block title %} Главная страница {% endblock %}
 
 {% block content %}
-  <h2> Главная страница </h2>
-  <ul>
-
-    <li><a href="{% url 'all_clients' %}"> Клиенты </a> </li>
-    <li><a href="{% url 'all_employees' %}"> Сотрудники </a> </li>
-    <li><a href="{% url 'all_cash' %}"> Поступления </a> </li>
-    <li><a href="{% url 'all_payments' %}"> Расходы </a> </li>
-    <li><a href="{% url 'payment_calendar' %}"> Платежный календарь </a> </li>
-
-  </ul>
+  {{ chart | safe }}
+<div>
+<h2> Клиентов  </h2>
+  <h1>{{ clients_working }}</h1>
+</div>
 {% endblock %}
